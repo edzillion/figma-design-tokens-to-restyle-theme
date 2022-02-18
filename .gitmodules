@@ -1,0 +1,4 @@
+[submodule "community-group"]
+	path = community-group
+	url = https://github.com/design-tokens/community-group.git
+	branch = example-token-files
