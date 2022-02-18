@@ -16,7 +16,7 @@ const fontKeys = [
 
 const pathMode = true;
 
-export function process(inputData): TokenEntry[] {
+export function extract(inputData): TokenEntry[] {
   const tokenCollection: TokenEntry[] = [];
 
   function extractTokens(data, parent?) {

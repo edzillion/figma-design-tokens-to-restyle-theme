@@ -1,4 +1,6 @@
 import { writeFileSync } from "fs";
+import beautify from "js-beautify";
+
 import { SingleTokenObject } from "./types/tokens";
 import { getTokenFileText } from "./utils/fileUtils";
 import {
@@ -9,8 +11,7 @@ import {
   formatTokenValue,
 } from "./utils/objUtils";
 import { getTheme } from "./utils/themeExtractor";
-
-import { process, TokenEntry } from "./utils/tokenExtractor";
+import { extract, TokenEntry } from "./utils/tokenExtractor";
 
 const KNOWN_BASE_THEME_KEYS = [
   "colors",
@@ -20,6 +21,13 @@ const KNOWN_BASE_THEME_KEYS = [
   "borderRadii",
 ];
 
+const fileTopText =
+  'import { createTheme } from "@shopify/restyle";\n\n' +
+  "type DeepPartial<T> = {\n[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]\n};\n\n";
+
+const typeDeclarationsText =
+  "type Theme = typeof theme;\ntype SubTheme = DeepPartial<Theme>;\n\n";
+
 const translate = (type) => {
   if (type === "color") return "colors";
   if (type === "typography") return "textVariants";
@@ -27,10 +35,9 @@ const translate = (type) => {
 };
 
 const fileText = getTokenFileText();
-const outFile = "";
 
 const main = async () => {
-  const tokenCollection: TokenEntry[] = process(fileText);
+  const tokenCollection: TokenEntry[] = extract(fileText);
 
   const globalKeysObject = tokenCollection.reduce((accum, curr) => {
     if (curr.path[0] !== "global") return accum;
@@ -68,15 +75,12 @@ const main = async () => {
       if (!isNaN(Number(key[0]))) return;
       processText = "";
       process(key, value, true);
-      returnText += processText + "\n\n";
+      returnText += processText + ";\n\n";
     });
     return returnText;
   };
 
-  const globalText =
-    'import { createTheme } from "@shopify/restyle"\n\n' +
-    "type DeepPartial<T> = {\n[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]\n}\n\n" +
-    generateGlobalKeysText(globalKeysObject);
+  const globalsText = generateGlobalKeysText(globalKeysObject);
 
   const themeTokens = tokenCollection.reduce((accum, curr) => {
     if (curr.path[0] === "global") return accum;
@@ -138,7 +142,7 @@ const main = async () => {
     mainThemeText += element;
   });
 
-  mainThemeText += "})\n\n\n";
+  mainThemeText += "});\n\n\n";
 
   delete themeTokens["theme"];
 
@@ -181,16 +185,19 @@ const main = async () => {
   let subThemeText = "";
   Object.values(allSubThemesTextStems).forEach((element) => {
     subThemeText += element;
-    subThemeText += "}\n\n\n";
+    subThemeText += "};\n\n\n";
   });
 
-  const outputFileText =
-    globalText +
+  let outputFileText =
+    fileTopText +
+    globalsText +
     mainThemeText +
-    "type Theme = typeof theme;\ntype SubTheme = DeepPartial<Theme>\n\n" +
+    typeDeclarationsText +
     subThemeText;
+
+  outputFileText = beautify(outputFileText, { indent_size: 2 });
   writeFileSync("./src/results.ts", outputFileText);
-  console.log("e");
+  console.log("done");
 };
 
 main();

@@ -5,6 +5,9 @@
   "main": "dist/figma-design-tokens-to-restyle-theme.js",
   "repository": "git@github.com:edzillion/figma-design-tokens-to-restyle-theme.git",
   "author": "edzillion <edzillion@gmail.com>",
+  "bin": {
+    "json-now": "./bin/figma-design-tokens-to-restyle-theme.js"
+  },
   "license": "ISC",
   "devDependencies": {
     "@shopify/restyle": "^1.6.1",
@@ -22,6 +25,8 @@
     "build": "npx tsc"
   },
   "dependencies": {
+    "commander": "^9.0.0",
+    "js-beautify": "^1.14.0",
     "stream-json": "^1.7.3"
   }
 }
