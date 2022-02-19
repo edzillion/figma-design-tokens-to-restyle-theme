@@ -10,7 +10,7 @@ interface ThemeObj {
   theme?: any;
 }
 
-export async function getTheme() {
+export async function extractRestyleTheme() {
   try {
     const filePath = await findFile();
     data = readFileSync(filePath, "utf8");
@@ -31,7 +31,7 @@ export async function getTheme() {
     const destructuringAssignmentsRegex = new RegExp(/(\.\.\.).*/g);
     let jsonStr = themeBlock.replace(
       destructuringAssignmentsRegex,
-      function (matchedStr) {
+      function () {
         return "";
       }
     );

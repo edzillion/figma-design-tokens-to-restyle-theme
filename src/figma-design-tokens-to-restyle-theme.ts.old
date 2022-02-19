@@ -6,7 +6,7 @@ import { getTokenFileText } from "./utils/fileUtils";
 import {
   simpleObjectMerge,
   convertToNestedTokenObject,
-  convertNumericKey,
+  formatTokenKey,
   isSingleTokenObject,
   formatTokenValue,
 } from "./utils/objUtils";
@@ -54,7 +54,7 @@ const main = async () => {
     const process = (key, obj, firstRunFlag?) => {
       if (!isSingleTokenObject(obj)) {
         if (firstRunFlag) processText += "const " + key + " = {\n";
-        else processText += convertNumericKey(key) + ": {\n";
+        else processText += formatTokenKey(key) + ": {\n";
         Object.entries(obj).forEach(([key, value]) => process(key, value));
         if (firstRunFlag) processText += "}\n";
         else processText += "},\n";
@@ -66,7 +66,7 @@ const main = async () => {
             "const " + key + " = " + formatTokenValue(token) + "\n";
         else
           processText +=
-            convertNumericKey(key) + ": " + formatTokenValue(token) + ",\n";
+            formatTokenKey(key) + ": " + formatTokenValue(token) + ",\n";
       }
     };
 

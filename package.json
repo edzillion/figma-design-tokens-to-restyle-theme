@@ -27,8 +27,9 @@
     "build": "npx tsc"
   },
   "dependencies": {
-    "commander": "^9.0.0",
+    "end-child-processes": "^1.0.3",
+    "exit": "^0.1.2",
     "js-beautify": "^1.14.0",
-    "stream-json": "^1.7.3"
+    "minimist": "^1.2.5"
   }
 }
