@@ -14,8 +14,8 @@
       "program": "${workspaceFolder}\\bin\\figma-to-restyle",
       "args": [
         "convert",
-        "./community-group/examples/01-flat-structure.json",
-        "./01-flat-structure.ts"        
+        "./community-group/examples/02-grouped-structure.json",
+        "./01-grouped-structure.ts"        
       ],
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": [

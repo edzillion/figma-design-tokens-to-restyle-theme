@@ -5,13 +5,12 @@ import {
 import { SingleTokenObject } from "../types/tokens";
 import { TokenEntry } from "./tokenExtractor";
 
-const validVariableName = new RegExp(/[a-zA-Z_$][0-9a-zA-Z_$]*/);
 const dotsAndDashes = new RegExp(/[-.]/g);
+
+import "../types/global";
 
 function isValidVarName(name) {
   try {
-    // Update, previoulsy it was
-    // eval('(function() { var ' + name + '; })()');
     Function("var " + name);
   } catch (e) {
     return false;
@@ -26,7 +25,7 @@ export function isSingleTokenObject(
 }
 
 export function formatTokenKey(key) {
-  if (validVariableName.test(key)) return key;
+  if (isValidVarName(key)) return key;
   else return "['" + key + "']";
 }
 
@@ -40,18 +39,38 @@ export function formatTokenVariable(key) {
   }
 }
 
+export function formatTokenVariablePath(variablePath) {
+  return variablePath
+    .split(".")
+    .map((pathPart, index) => {
+      // variables cannot use ['var'] notation
+      if (index === 0) return formatTokenVariable(pathPart);
+      return "['" + pathPart + "']";
+    })
+    .join("");
+}
+
 export function formatTokenValue(token: SingleTokenObject): string {
   function process(tokenValue: string): string {
     // slice off {} curly brackets then split into obj path
-    const variablePath = tokenValue.slice(1, -1).split(".");
+    const fullPath = tokenValue.slice(1, -1);
+    const pathArray = fullPath.split(".");
 
-    return variablePath
+    // is this variable referencing an object path created using ['var'] notation
+    const isSeparatePath =
+      globalThis.separateDeclarations.find(
+        (path) => path === fullPath || path.startsWith(fullPath + ".")
+      ) || false;
+
+    const v = pathArray
       .map((pathPart, index) => {
-        // top level variables cannot use ['var'] notation
+        // variables cannot use ['var'] notation
         if (index === 0) return formatTokenVariable(pathPart);
-        return formatTokenKey(pathPart);
+        if (isValidVarName(pathPart) && !isSeparatePath) return "." + pathPart;
+        else return "['" + pathPart + "']";
       })
       .join("");
+    return v;
   }
 
   if (typeof token.value === "number") {
@@ -101,10 +120,6 @@ export const convertToNestedTokenObject = (entry: TokenEntry): object => {
     }
     return { [item]: all };
   }
-
-  // drop the top key 'global', from the conversion
-  //const clonedPath = JSON.parse(JSON.stringify(entry.path.slice(1)));
-
   return entry.path.reduceRight(reducer.bind({ entry }), {});
 };
 
