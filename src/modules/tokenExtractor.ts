@@ -6,6 +6,7 @@ import "../types/global";
 export default function extractTokens(inputData): TokenEntry[] {
   const tokenCollection: TokenEntry[] = [];
 
+  // recursively search the inputData and add each token found to tokenCollection
   function process(data, parent?) {
     for (const key in data) {
       if (key === "type") continue;

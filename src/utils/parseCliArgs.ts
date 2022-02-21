@@ -37,7 +37,7 @@ export function parseCliArgs(argv: string[]): CliArgTypes {
     command = commands[0];
     commands.splice(0, 1);
   } else {
-    command = "unknown";
+    command = "";
   }
   result.command = command;
   result.files = commands;

@@ -13,6 +13,8 @@ const GLOBAL_FLAG = false;
 
 // takes in an array of TokenEntry and returns rendered global keys in ts string
 const convertTokens = (tokenCollection: TokenEntry[]): string => {
+  // create an object which contains the nested paths of each token, with the token
+  // attached to the end of the path
   const globalKeysObject = tokenCollection.reduce((accum, curr) => {
     if (GLOBAL_FLAG && curr.path[0] !== "global") return accum;
 
@@ -29,6 +31,7 @@ const convertTokens = (tokenCollection: TokenEntry[]): string => {
     let returnText = "";
     let processText: string;
 
+    // recursively convert the global keys object into code
     const process = (key, obj, firstRunFlag?) => {
       if (!isSingleTokenObject(obj)) {
         processText += firstRunFlag ? "{\n" : formatTokenKey(key) + ": {\n";

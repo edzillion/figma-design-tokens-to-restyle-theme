@@ -52,6 +52,7 @@ export function formatTokenVariable(key) {
   if (isValidVarName(key)) return key;
   else {
     // replace all dots and dashes with underlines
+    // todo: make the separator & prefix configurable?
     key = key.replace(dotsAndDashes, "_");
     // if it starts with a number then just prepend 'var'
     return isNaN(Number(key[0])) ? key : "var" + key;
@@ -75,7 +76,8 @@ export function formatTokenValue(token: SingleTokenObject): string {
     const fullPath = tokenValue.slice(1, -1);
     const pathArray = fullPath.split(".");
 
-    // is this variable referencing an object path created using ['var'] notation
+    // is this variable referencing an object path created using ['var'] notation?
+    // linters will throw errors as they cannot tell whether the prop access is valid
     const isSeparatePath =
       globalThis.separateDeclarations.find(
         (path) => path === fullPath || path.startsWith(fullPath + ".")
@@ -131,13 +133,15 @@ export function formatTokenValue(token: SingleTokenObject): string {
   return (returnText += "}\n");
 }
 
+// convert a TokenEntry so that entry.path [pathPart1][pathPart2][pathPart3] is converted into
+// { pathPart1:{ pathPart2:{ pathPart3: entry.token } } } }
 export const convertToNestedTokenObject = (entry: TokenEntry): object => {
-  function reducer(all, item, index, array) {
+  function reducer(all, pathPart, index, array) {
     // if we are at the end of the path then attach the token
     if (index === array.length - 1) {
-      return { [item]: entry.token };
+      return { [pathPart]: entry.token };
     }
-    return { [item]: all };
+    return { [pathPart]: all };
   }
   return entry.path.reduceRight(reducer.bind({ entry }), {});
 };
@@ -159,20 +163,3 @@ export function simpleObjectMerge(
   process(source, target);
   return target;
 }
-
-// simpleObjectMerge only works for our use case
-// export function simpleObjectMerge(
-//   path: string[],
-//   source: object,
-//   target: object
-// ): object {
-//   function process(source, target) {
-//     if (path.length > 0) {
-//       const p = path.shift();
-//       if (target[p]) process(source[p], target[p]);
-//       else target[p] = source[p];
-//     }
-//   }
-//   process(source, target);
-//   return target;
-// }

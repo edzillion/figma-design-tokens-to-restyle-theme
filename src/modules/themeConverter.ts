@@ -17,7 +17,7 @@ const translate = (type) => {
   else return type;
 };
 
-// takes a TokenEntry array and returns rendered theme typescript as a string
+// takes a TokenEntry array and returns rendered typescript theme as a string
 export const convertTheme = async (
   tokenCollection: TokenEntry[]
 ): Promise<string> => {
@@ -93,6 +93,7 @@ export const convertTheme = async (
 
   const allSubThemesTextStems = {};
 
+  // sub themes
   Object.keys(themeTokens).forEach((themeName) => {
     if (!allSubThemesTextStems[themeName])
       allSubThemesTextStems[themeName] =
