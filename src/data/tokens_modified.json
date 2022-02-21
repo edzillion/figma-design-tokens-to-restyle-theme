@@ -11,7 +11,7 @@
           "description": "primary brand color",
           "type": "color"
         },        
-        "dark:": {
+        "dark": {
           "value": "#b6c600",
           "description": "dark brand color",
           "type": "color"
@@ -195,45 +195,45 @@
       "type": "boxShadow"
     }
   },
-  "light": {
+  "theme": {
     "theme": {
       "fg": {
         "default": {
-          "value": "{colors.black}",
+          "value": "{global.colors.black}",
           "description": "default foreground color",
           "type": "color"
         },
         "muted": {
-          "value": "{colors.grey.900}",
+          "value": "{global.colors.grey.900}",
           "description": "muted foreground color",
           "type": "color"
         }
       },
       "bg": {
         "default": {
-          "value": "{colors.white}",
+          "value": "{global.colors.white}",
           "description": "default background color",
           "type": "color"
         },
         "muted": {
-          "value": "{colors.grey.100}",
+          "value": "{global.colors.grey.100}",
           "description": "muted background color",
           "type": "color"
         },
         "highlight": {
-          "value": "{colors.offWhite}",
+          "value": "{global.colors.offWhite}",
           "description": "highlight background color",
           "type": "color"
         }
       },
       "accent": {
         "primary": {
-          "value": "{colors.green}",
+          "value": "{global.colors.green.light}",
           "description": "primary accent color",
           "type": "color"
         },
         "secondary": {
-          "value": "{colors.blue}",
+          "value": "{global.colors.blue}",
           "description": "secondary accent color",
           "type": "color"
         }
@@ -254,36 +254,36 @@
     "theme": {
       "fg": {
         "default": {
-          "value": "{colors.white}",
+          "value": "{global.colors.white}",
           "description": "default foreground color",
           "type": "color"
         },
         "muted": {
-          "value": "{colors.grey.100}",
+          "value": "{global.colors.grey.100}",
           "description": "muted foreground color",
           "type": "color"
         }
       },
       "bg": {
         "default": {
-          "value": "{colors.black}",
+          "value": "{global.colors.black}",
           "description": "default background color",
           "type": "color"
         },
         "muted": {
-          "value": "{colors.grey.900}",
+          "value": "{global.colors.grey.900}",
           "description": "muted background color",
           "type": "color"
         }
       },
       "accent": {
         "primary": {
-          "value": "{colors.green}",
+          "value": "{global.colors.green.dark}",
           "description": "primary accent color",
           "type": "color"
         },
         "secondary": {
-          "value": "{colors.blue}",
+          "value": "{global.colors.blue}",
           "description": "secondary accent color",
           "type": "color"
         }
@@ -293,12 +293,12 @@
   "fonts": {
     "mainHeading": {
       "value": {
-        "fontFamily": "{fontFamilies.heading}",
-        "fontWeight": "{fontWeights.heading.regular}",
-        "lineHeight": "{lineHeights.auto}",
-        "fontSize": "{fontSizes.xl}",
+        "fontFamily": "{global.fontFamilies.heading}",
+        "fontWeight": "{global.fontWeights.heading.regular}",
+        "lineHeight": "{global.lineHeights.auto}",
+        "fontSize": "{global.fontSizes.xl}",
         "paragraphSpacing": "0",
-        "letterSpacing": "{letterSpacing.wide}",
+        "letterSpacing": "{global.letterSpacing.wide}",
         "textDecoration": "none",
         "textCase": "TITLE"
       },
@@ -306,10 +306,10 @@
     },
     "subHeading": {
       "value": {
-        "fontFamily": "{fontFamilies.heading}",
-        "fontWeight": "{fontWeights.heading.regular}",
-        "lineHeight": "{lineHeights.auto}",
-        "fontSize": "{fontSizes.lg}",
+        "fontFamily": "{global.fontFamilies.heading}",
+        "fontWeight": "{global.fontWeights.heading.regular}",
+        "lineHeight": "{global.lineHeights.auto}",
+        "fontSize": "{global.fontSizes.lg}",
         "paragraphSpacing": "0",
         "textDecoration": "none",
         "textCase": "none"
@@ -318,9 +318,9 @@
     },
     "cardTitle": {
       "value": {
-        "fontFamily": "{fontFamilies.Kalam}",
-        "fontSize": "{fontSizes.lg}",
-        "lineHeight": "{lineHeights.auto}",
+        "fontFamily": "{global.fontFamilies.Kalam}",
+        "fontSize": "{global.fontSizes.lg}",
+        "lineHeight": "{global.lineHeights.auto}",
         "paragraphSpacing": "0",
         "textDecoration": "none",
         "textCase": "none"
@@ -329,9 +329,9 @@
     },
     "cardTitle2": {
       "value": {
-        "fontFamily": "{fontFamilies.Itim}",
-        "fontSize": "{fontSizes.lg}",
-        "lineHeight": "{lineHeights.auto}",
+        "fontFamily": "{global.fontFamilies.Itim}",
+        "fontSize": "{global.fontSizes.lg}",
+        "lineHeight": "{global.lineHeights.auto}",
         "paragraphSpacing": "0",
         "textDecoration": "none",
         "textCase": "none"
@@ -340,9 +340,9 @@
     },
     "cardTitle3": {
       "value": {
-        "fontFamily": "{fontFamilies.ShortStack}",
-        "fontSize": "{fontSizes.lg}",
-        "lineHeight": "{lineHeights.auto}",
+        "fontFamily": "{global.fontFamilies.ShortStack}",
+        "fontSize": "{global.fontSizes.lg}",
+        "lineHeight": "{global.lineHeights.auto}",
         "paragraphSpacing": "0",
         "textDecoration": "none",
         "textCase": "none"

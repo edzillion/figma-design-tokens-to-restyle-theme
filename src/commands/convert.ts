@@ -1,23 +1,29 @@
-import path from "path";
-import { main } from "../main";
+import { writeFileSync } from "fs";
+import beautify from "js-beautify";
+
+import { getTokenFileText } from "../utils/fileUtils";
+
+import extractTokens from "../modules/tokenExtractor";
+import convertTokens from "../modules/tokenConverter";
+import convertTheme from "../modules/themeConverter";
+
+const fileTopText =
+  'import { createTheme } from "@shopify/restyle";\n\n' +
+  "type DeepPartial<T> = {\n[P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]\n};\n\n";
 
 export default async function convertCommand(
   files: string[]
 ): Promise<Error[]> {
-  await main(files[0], files[1]);
+  const fileText = getTokenFileText(files[0]);
+
+  const tokenCollection = extractTokens(fileText);
+  const tokensText = await convertTokens(tokenCollection);
+  const themeText = await convertTheme(tokenCollection);
+
+  let outputFileText = fileTopText + tokensText + themeText;
+
+  outputFileText = beautify(outputFileText, { indent_size: 2 });
+  const writeFilePath = files[1] || "./out/tokens.ts";
+  writeFileSync(writeFilePath, outputFileText);
   return [];
 }
-
-// function template(filename: string) {
-//   return `module.exports = async function (activity) {
-//   console.log('This code runs inside the "${filename}" block implementation.')
-//   console.log('I found these elements in your document:')
-//   console.log(activity.nodes)
-
-//   // capture content from the document
-//   // const content = activity.searcher.tagContent('boldtext')
-//   // do something with the content
-//   // formatter.log(content)
-// }
-// `;
-// }

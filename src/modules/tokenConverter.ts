@@ -1,4 +1,4 @@
-import { SingleTokenObject } from "./types/tokens";
+import { SingleTokenObject, TokenEntry, TokenGroup } from "../types/tokens";
 import {
   formatTokenKey,
   convertToNestedTokenObject,
@@ -7,19 +7,22 @@ import {
   simpleObjectMerge,
   formatTokenVariable,
   formatTokenVariablePath,
-} from "./utils/objUtils";
+} from "../utils/objUtils";
 
 const GLOBAL_FLAG = false;
 
-const convertTokens = (tokenCollection): string => {
-  //let separateDeclarationIndex = 0;
+// takes in an array of TokenEntry and returns rendered global keys in ts string
+const convertTokens = (tokenCollection: TokenEntry[]): string => {
   const globalKeysObject = tokenCollection.reduce((accum, curr) => {
     if (GLOBAL_FLAG && curr.path[0] !== "global") return accum;
 
+    // todo: temporary!
+    if (curr.path[0] === "theme" || curr.path[1] === "theme") return accum;
     const obj = convertToNestedTokenObject(curr);
     // need to drop the 'global' key for merge in global mode
     const mergePath = GLOBAL_FLAG ? curr.path.slice(1) : curr.path;
-    return simpleObjectMerge(mergePath, obj, accum);
+    const merged = simpleObjectMerge(mergePath, obj, accum);
+    return merged;
   }, {});
 
   const generateGlobalKeysText = (globalKeysObject: object): string => {
@@ -28,8 +31,8 @@ const convertTokens = (tokenCollection): string => {
 
     const process = (key, obj, firstRunFlag?) => {
       if (!isSingleTokenObject(obj)) {
-        //processText += formatTokenKey(key) + ": {\n";
-        processText += "{\n";
+        processText += firstRunFlag ? "{\n" : formatTokenKey(key) + ": {\n";
+
         Object.entries(obj).forEach(([key, value]) => process(key, value));
         //if (firstRunFlag) processText += "}\n";
         processText += "},\n";
@@ -44,7 +47,10 @@ const convertTokens = (tokenCollection): string => {
 
     Object.entries(globalKeysObject).forEach(([key, value]) => {
       // can't deal with top level keys starting with numbers
-      if (!isNaN(Number(key[0]))) return;
+      if (!isNaN(Number(key[0]))) {
+        console.error("top level keys cannot start with numbers, key:" + key);
+        return;
+      }
       processText = "";
       if (key.includes(".")) {
         processText = formatTokenVariablePath(key) + " = ";

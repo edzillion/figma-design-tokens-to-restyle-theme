@@ -2,8 +2,13 @@ import {
   ShadowTokenSingleValue,
   TypographyObject,
 } from "../types/propertyTypes";
-import { SingleTokenObject } from "../types/tokens";
-import { TokenEntry } from "./tokenExtractor";
+import {
+  isCompositeTokenType,
+  isTokenType,
+  SingleTokenObject,
+  TokenGroup,
+  TokenEntry,
+} from "../types/tokens";
 
 const dotsAndDashes = new RegExp(/[-.]/g);
 
@@ -22,6 +27,20 @@ export function isSingleTokenObject(
   object: unknown
 ): object is SingleTokenObject {
   return typeof object === "object" && "value" in object && "type" in object;
+}
+
+export function isTokenGroup(object: unknown): object is TokenGroup {
+  const groupType = object["type"];
+  if (groupType && isTokenType(groupType)) {
+    return Object.keys(object).every((key) => {
+      if (key === "type") return true;
+      // each child should conform to the shape of the stated type
+      if (isCompositeTokenType(groupType)) {
+        return true;
+      } else if (object[key].value && typeof object[key].value === "string")
+        return true;
+    });
+  } else return false;
 }
 
 export function formatTokenKey(key) {
@@ -129,9 +148,10 @@ export function simpleObjectMerge(
   source: object,
   target: object
 ): object {
+  let index = -1;
   function process(source, target) {
-    if (path.length > 0) {
-      const p = path.shift();
+    if (++index < path.length) {
+      const p = path[index];
       if (target[p]) process(source[p], target[p]);
       else target[p] = source[p];
     }
@@ -139,3 +159,20 @@ export function simpleObjectMerge(
   process(source, target);
   return target;
 }
+
+// simpleObjectMerge only works for our use case
+// export function simpleObjectMerge(
+//   path: string[],
+//   source: object,
+//   target: object
+// ): object {
+//   function process(source, target) {
+//     if (path.length > 0) {
+//       const p = path.shift();
+//       if (target[p]) process(source[p], target[p]);
+//       else target[p] = source[p];
+//     }
+//   }
+//   process(source, target);
+//   return target;
+// }

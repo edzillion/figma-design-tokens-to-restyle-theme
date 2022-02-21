@@ -23,7 +23,7 @@ export type NewTokenObject = {
 };
 
 type SingleTokenObjectCommonProperties = {
-  name: string;
+  name?: string;
   description?: string;
 };
 
@@ -41,8 +41,12 @@ export type SingleTokenObject =
       value: string | number;
     });
 
-export interface TokenGroup {
+export type TokenGroup = TokenGroupType & {
   [key: string]: SingleToken;
+};
+
+export interface TokenGroupType {
+  type?: TokenType;
 }
 
 export type TokenArrayGroup = SingleTokenObject[];
@@ -56,25 +60,48 @@ export interface TokenObject {
   type: "array" | "object";
 }
 
-export type TokenType =
-  | "color"
-  | "implicit"
-  | "borderRadius"
-  | "sizing"
-  | "spacing"
-  | "text"
-  | "typography"
-  | "opacity"
-  | "borderWidth"
-  | "boxShadow"
-  | "fontFamilies"
-  | "fontWeights"
-  | "lineHeights"
-  | "fontSizes"
-  | "letterSpacing"
-  | "paragraphSpacing"
-  | "textDecoration"
-  | "textCase";
+export const tokenTypes = [
+  "font",
+  "dimension",
+  "color",
+  "implicit",
+  "borderRadius",
+  "sizing",
+  "spacing",
+  "text",
+  "typography",
+  "opacity",
+  "borderWidth",
+  "boxShadow",
+  "fontFamilies",
+  "fontWeights",
+  "lineHeights",
+  "fontSizes",
+  "letterSpacing",
+  "paragraphSpacing",
+  "textDecoration",
+  "textCase",
+] as const;
+
+export type TokenType = typeof tokenTypes[number];
+
+export function isTokenType(key: string): key is TokenType {
+  return exports.tokenTypes.includes(key as TokenType);
+}
+
+export const compositeTokenTypes = [
+  "typography",
+  "border",
+  "gradient",
+  "boxShadow",
+  "transition",
+];
+
+export type CompositeTokenType = typeof tokenTypes[number];
+
+export function isCompositeTokenType(key: string): key is CompositeTokenType {
+  return exports.compositeTokenTypes.includes(key as CompositeTokenType);
+}
 
 export interface SelectionGroup {
   category: TokenType;
@@ -124,3 +151,13 @@ export type PullStyleTypes = {
   colorStyles?: boolean;
   effectStyles?: boolean;
 };
+
+export interface TokenEntry {
+  path: string[];
+  token: SingleTokenObject;
+}
+
+export interface GroupTokenEntry {
+  path: string[];
+  tokenEntries: [TokenEntry];
+}

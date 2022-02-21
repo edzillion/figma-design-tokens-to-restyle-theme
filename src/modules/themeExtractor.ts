@@ -1,18 +1,18 @@
 import { readFileSync } from "fs";
-import { findFile } from "./fileUtils";
-
-let data: string;
-
-const themeObj: ThemeObj = {};
+import { findThemeFile } from "../utils/fileUtils";
 
 interface ThemeObj {
   themeName?: string;
   theme?: any;
 }
 
-export async function extractRestyleTheme() {
+// parses the restyle theme.ts file and returns an object representation.
+export async function extractRestyleTheme(): Promise<ThemeObj> {
+  let data: string;
+  const themeObj: ThemeObj = {};
+
   try {
-    const filePath = await findFile();
+    const filePath = await findThemeFile();
     data = readFileSync(filePath, "utf8");
   } catch (err) {
     console.error(err);
@@ -50,7 +50,7 @@ export async function extractRestyleTheme() {
 
     const trailingCommasRegex = new RegExp(/(,\s*\})/g);
     Array.from(jsonStr.matchAll(trailingCommasRegex))
-      .map((match: any) => match.index)
+      .map((match) => match.index)
       .sort((a, b) => b - a)
       .forEach((index) => {
         if (jsonStr.charAt(index) === ",") {

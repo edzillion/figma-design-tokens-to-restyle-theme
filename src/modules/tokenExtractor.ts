@@ -1,26 +1,14 @@
-import { SingleTokenObject } from "../types/tokens";
-import { isSingleTokenObject } from "./objUtils";
+import { TokenEntry } from "../types/tokens";
+import { isSingleTokenObject, isTokenGroup } from "../utils/objUtils";
 import "../types/global";
-export interface TokenEntry {
-  path: [string];
-  token: SingleTokenObject;
-}
 
-const fontKeys = [
-  "fontFamilies",
-  "fontWeights",
-  "lineHeights",
-  "fontSizes",
-  "letterSpacing",
-];
-
-const pathMode = true;
-
-export function extract(inputData): TokenEntry[] {
+// takes an array of TokenEntry and returns a
+export default function extractTokens(inputData): TokenEntry[] {
   const tokenCollection: TokenEntry[] = [];
 
-  function extractTokens(data, parent?) {
+  function process(data, parent?) {
     for (const key in data) {
+      if (key === "type") continue;
       const obj = data[key];
       const path = parent ? parent.concat(key) : [key];
       if (typeof obj === "object") {
@@ -43,15 +31,26 @@ export function extract(inputData): TokenEntry[] {
             path,
             token: obj,
           };
-
           tokenCollection.push(entry);
+        } else if (isTokenGroup(obj)) {
+          const groupType = obj.type;
+          Object.entries(obj as unknown).forEach(([key, val]) => {
+            if (key === "type") return;
+            val.type = groupType;
+            const p = path.concat(key);
+            const entry: TokenEntry = {
+              path: p,
+              token: val,
+            };
+            tokenCollection.push(entry);
+          });
         } else {
-          extractTokens(obj, path);
+          process(obj, path);
         }
       }
     }
     if (parent) parent.pop();
   }
-  extractTokens(inputData);
+  process(inputData);
   return tokenCollection;
 }
