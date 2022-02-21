@@ -11,17 +11,14 @@ async function getFiles(path = "./src/") {
   // Get folders within the current directory
   const folders = entries.filter((folder) => folder.isDirectory());
 
-  /*
-        Add the found files within the subdirectory to the files array by calling the
-        current function itself
-      */
+  // Add the found files within the subdirectory to the files array and call getFiles on subdirectories
   for (const folder of folders)
     files.push(...(await getFiles(`${path}${folder.name}/`)));
 
   return files;
 }
 
-export async function findFile(fileName = "theme.ts"): Promise<string> {
+export async function findThemeFile(fileName = "theme.ts"): Promise<string> {
   const files = await getFiles();
   const restyleTokensFilePath = files.find((f) => f.name === fileName).path;
   return restyleTokensFilePath;
