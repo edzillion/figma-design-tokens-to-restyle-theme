@@ -23,7 +23,7 @@
   "scripts": {
     "start": "tsc && node dist/figma-design-tokens-to-restyle-theme.js",
     "lint": "eslint . --ext .ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "yarn build && node ./bin/figma-to-restyle convert ./src/data/tokens_modified.json ./out/theme.ts && node ./bin/figma-to-restyle convert ./community-group/examples/01-flat-structure.json ./out/01-flat-structure.ts && node ./bin/figma-to-restyle convert ./community-group/examples/02-grouped-structure.json ./out/02-grouped-structure.ts && node ./bin/figma-to-restyle convert ./community-group/examples/03-composite-tokens.json ./out/03-composite-tokens.ts && node ./bin/figma-to-restyle convert ./community-group/examples/04-group-types.json ./out/04-group-types.ts",
     "build": "npx tsc"
   },
   "dependencies": {
